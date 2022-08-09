@@ -86,6 +86,7 @@ summary(lm_model_3_num)$r.squared - summary(lm_model_1_num)$r.squared
 plot_model(lm_model, type = "pred", terms = c("pep_effect"), show.data = TRUE)
 
 
+#Check assumptions of first model with time DV
 check_model(lm_model)
 #The posterior predictive check of the model shows that the LR model is not adequate
 #This is the case because the distribution of the outcome is positively skewed, with zeros included.
@@ -104,6 +105,7 @@ report(zigamma_model)
 
 model_parameters(zigamma_model, exponentiate = TRUE)
 
+#exploratory analysis with more adequate model
 zigamma_model_explicit <- glmmTMB(learning_time ~ scale(pep_effect) + scale(self_efficacy) + scale(iqms_avg),
                          family = ziGamma(link = "log"),
                          ziformula = ~ scale(pep_effect) + scale(self_efficacy),
@@ -193,7 +195,8 @@ plot(both_plots)
 dev.off()
 
 
-##Testing hypothesis on the pre-registered secondary outcome
+##Testing hypothesis on the pre-registered secondary outcome in a more adequate model
+#DV is count, thus start with a poisson regression
 
 #First, checking the regular poisson regression
 
@@ -286,7 +289,7 @@ cens_poins_plot_e<-
   scale_y_continuous(breaks=seq(1, 12)) 
 
 
-
+#merge the plots
 both_plots_cens_pois<-
   ggarrange(cens_poins_plot_i, cens_poins_plot_e, 
             labels = c("", ""),
