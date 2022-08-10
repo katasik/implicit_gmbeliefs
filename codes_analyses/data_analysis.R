@@ -108,7 +108,7 @@ model_parameters(zigamma_model, exponentiate = TRUE)
 #exploratory analysis with more adequate model
 zigamma_model_explicit <- glmmTMB(learning_time ~ scale(pep_effect) + scale(self_efficacy) + scale(iqms_avg),
                          family = ziGamma(link = "log"),
-                         ziformula = ~ scale(pep_effect) + scale(self_efficacy),
+                         ziformula = ~ scale(pep_effect) + scale(self_efficacy) + scale(iqms_avg),
                          data = final_df)
 summary(zigamma_model_explicit)
 report(zigamma_model_explicit)
@@ -146,6 +146,9 @@ tab_model(binary_model_explicit,
 ##Testing assumptions
 
 check_zigamma_model <- simulateResiduals(fittedModel = zigamma_model, n = 500)
+plot(check_zigamma_model)
+
+check_zigamma_model_explicit <- simulateResiduals(fittedModel = zigamma_model_explicit, n = 500)
 plot(check_zigamma_model)
 
 #Assumptions are fine

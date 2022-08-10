@@ -3,9 +3,12 @@ library(tidyverse)
 
 #read datatables
 
-learning_table<- read.csv("data/learning_table.csv")
-explicit_final<- read.csv("data/explicit_final.csv")
-mt_pep_df<- read.csv("data/mt_pep_df.csv")
+learning_table<- read.csv("data/learning_table.csv") %>% 
+  select(-1)
+explicit_final<- read.csv("data/explicit_final.csv") %>% 
+  select(-1)
+mt_pep_df<- read.csv("data/mt_pep_df.csv") %>% 
+  select(-1)
 
 #merge behavioral, explicit and implicit data
 
