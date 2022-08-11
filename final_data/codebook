@@ -22,7 +22,8 @@ iq_security: How confident are you about your IQ? (higher scores represent highe
 iq_importance: How imprtant is your IQ for you? (higher scores represent higher importance)
 study: field of study
 study_text: field of study if they didn't select
-setback_experience: How well did you do on the warmup block? This questions served as confirmation for the setback experience (lower scores represent higher setbeck experience)
+setback_performance: Performance score on the first, difficult block
+setback_experience: How well did you do on the warmup block? This question served as confirmation for the setback experience (lower scores represent higher setbeck experience)
 success_imp_1: How important was it for you to succeed on the IQ test? (higher scores represent higher importance)
 task_enjoyment_1: How much did you enjoy the warmup block? (higher schores represent higher enjoyment)
 task_enjoyment_2: How much did you enjoy the improvement block? (higher schores represent higher enjoyment)
