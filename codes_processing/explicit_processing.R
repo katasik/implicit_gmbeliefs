@@ -138,7 +138,7 @@ explicit_scores<-
 #creating final, cleaned dataset for explicit data
 explicit_final<- explicit_scores %>% 
   select(matchid, iqms_avg:effort_avoidance, task_approach, task_avoidance, self_approach, iq_security:study_text, 
-         setback_experience, success_imp_1:task_enjoyment_2, gender, age, 
+         setback_performance, setback_experience, success_imp_1:task_enjoyment_2, gender, age, 
          semester_1, semester_2, gpa_reversed, academic_succ_experience, first_gen)
 
 write.csv(explicit_final, "data/explicit_final.csv")
