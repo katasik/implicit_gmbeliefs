@@ -312,7 +312,7 @@ challengingblock_performance <- glm(setback_performance ~ scale(self_efficacy) +
              data = final_df)
 
 summary(challengingblock_performance)
-
+confint(challengingblock_performance, 'scale(pep_effect)', level=0.95)
 
 tab_model(challengingblock_performance,
           show.intercept = TRUE,
