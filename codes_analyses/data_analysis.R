@@ -9,6 +9,7 @@ library(parameters)
 library(webshot)
 library(report)
 library(ggpubr)
+library(olsrr)
 
 final_df<- read.csv("final_data/final_df.csv")
 
@@ -44,7 +45,7 @@ tab_model(lm_model_explicit,
           file = "tables/lm_table.doc")
 
 
-#Exploratory analysis, secondary DV: adding explicit score to the mdoel as well
+#Exploratory analysis, secondary DV: adding explicit score to the model as well
 lm_model_explicit_num <- lm(learning_num ~ scale(pep_effect) + scale(self_efficacy) + scale(iqms_avg), data = final_df)
 summary(lm_model_explicit_num)
 
@@ -89,7 +90,12 @@ plot_model(lm_model, type = "pred", terms = c("pep_effect"), show.data = TRUE)
 #Check assumptions of first model with time DV
 check_model(lm_model)
 #The posterior predictive check of the model shows that the LR model is not adequate
-#This is the case because the distribution of the outcome is positively skewed, with zeros included.
+#Testing the normality of residuals with Kolmogorov-Smirnov test
+ols_test_normality(lm_model)
+
+#It's not normally distributed
+
+#This is the case because the distribution of the outcome is positively skewed, bounded at zero.
 
 qplot(final_df$learning_time)
 
@@ -101,6 +107,7 @@ zigamma_model <- glmmTMB(learning_time ~ scale(pep_effect) + scale(self_efficacy
                          ziformula = ~ scale(pep_effect) + scale(self_efficacy),
                          data = final_df)
 summary(zigamma_model)
+AIC(zigamma_model)
 report(zigamma_model)
 
 model_parameters(zigamma_model, exponentiate = TRUE)
