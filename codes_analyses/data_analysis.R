@@ -28,11 +28,20 @@ summary(lm_model_num)
 report(lm_model_num)
 
 #Exploratory analysis, primary DV: adding explicit score to the model as well
-lm_model_explicit <- lm(learning_time ~ scale(pep_effect) + scale(self_efficacy) + scale(iqms_avg), data = final_df)
+lm_model_explicit <- lm(learning_time ~ scale(self_efficacy) +  scale(iqms_avg) + scale(pep_effect), data = final_df)
 summary(lm_model_explicit)
 
 #Reporting it
 report(lm_model_explicit)
+
+
+#Exploratory analysis, secondary DV: adding explicit score to the model as well
+lm_model_explicit_num <- lm(learning_num ~ scale(self_efficacy) +  scale(iqms_avg) + scale(pep_effect), data = final_df)
+summary(lm_model_explicit_num)
+
+#Reporting it
+report(lm_model_explicit_num)
+
 
 #get model results in .doc file
 tab_model(lm_model_explicit,
@@ -42,15 +51,17 @@ tab_model(lm_model_explicit,
           show.p = TRUE,
           show.stat = TRUE,
           show.aic = TRUE,
-          file = "tables/lm_table.doc")
+          file = "tables/lm_table_time.doc")
 
 
-#Exploratory analysis, secondary DV: adding explicit score to the model as well
-lm_model_explicit_num <- lm(learning_num ~ scale(pep_effect) + scale(self_efficacy) + scale(iqms_avg), data = final_df)
-summary(lm_model_explicit_num)
-
-#Reporting it
-report(lm_model_explicit_num)
+tab_model(lm_model_explicit_num,
+          show.intercept = TRUE,
+          show.est = TRUE,
+          show.se = TRUE,
+          show.p = TRUE,
+          show.stat = TRUE,
+          show.aic = TRUE,
+          file = "tables/lm_table_item.doc")
 
 ##Hierarhical regression first dependent variable
 
