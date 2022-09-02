@@ -136,7 +136,7 @@ model_parameters(zigamma_model_explicit, exponentiate = TRUE)
 #the gamma coefficients are correct, however the binomial part of the model actually calculates the probability of zero
 #rather than the probability of 1. From a stackoverflow answer:
 #"glmmTMB is predicting the probability of a zero rather than of a non-zero value"
-#this just means that we have to reverse the minus values to plus values in the binomial part of the model
+#this just means that we have to reverse the minus values to plus values in the binomial part of the model (and exponentiate the positive values in the end)
 #but just to confirm, the following code shows the same, but positive values in the binomial part of the model:
 
 binary_model <- glm(binary_learning ~ scale(pep_effect) + scale(self_efficacy),
@@ -250,7 +250,7 @@ binary_model <- glm(binary_learning ~ scale(pep_effect) + scale(self_efficacy),
                     family = "binomial",
                     data = final_df)
 summary(binary_model)
-#it's not significant, as in the main hypothesis
+#it's not significant, as in the main hypothesis, showing the same results
 
 #now, let's create a dataframe, which includes only those, who looked at at least 1 solution
 reduced<- final_df %>% 
