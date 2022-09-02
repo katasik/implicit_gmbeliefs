@@ -323,35 +323,3 @@ plot(both_plots_cens_pois)
 dev.off()
 
 
-### Additional exploratory analysis
-
-challengingblock_performance <- glm(setback_performance ~ scale(self_efficacy) + scale(iqms_avg) + scale(pep_effect), 
-             family = "poisson", 
-             data = final_df)
-
-summary(challengingblock_performance)
-confint(challengingblock_performance, 'scale(pep_effect)', level=0.95)
-
-tab_model(challengingblock_performance,
-          show.intercept = TRUE,
-          show.est = TRUE,
-          show.se = TRUE,
-          show.p = TRUE,
-          show.stat = TRUE,
-          show.aic = TRUE,
-          file = "tables/challengingblock_performance.doc")
-
-
-
-#create predicted values
-pois_pred<- predict(challengingblock_performance, type = "response")
-final_df$pois_pred <- pois_pred
-
-pois_plot<-
-  ggplot(final_df, aes(x = pep_effect, y = pois_pred)) +
-  geom_point(aes(y=setback_performance, alpha =1), size = 2.2, show.legend = FALSE) +
-  geom_smooth(method = "glm", method.args = list(family = "poisson"), level = 0.95, 
-              color = "black", fill = "#b9b9b9", size = 0.7) +
-  labs(y = "",
-       x = "Implicit score of growth mindset") +
-  theme_classic() 
