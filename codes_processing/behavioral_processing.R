@@ -38,8 +38,8 @@ learning_table<- explicit_raw %>%
          solution_time_10, solution_time_11, solution_time_12) %>% 
   #because of a programming error, even if people decided not to look at any solutions at the first decision, they were led to the first
   #solution automatically. This way, there is automatically some time calculated for everyone even if they chose
-  #not to view any solutions at the beginning. Furthermore, among these people, after viewing the first solution, some of them chose to view more more solutions. 
-  #As we don't want to build our results on a technical mistake, so we need to recode their responses as if 
+  #not to view any solutions at the beginning. Furthermore, among these people, after viewing the first solution, some of them chose to view more solutions. 
+  #As we don't want to build our results on a technical mistake, we need to recode their responses as if 
   #they did not look at any solutions if they initially chose not to view any solutions. This problem occurred only at the first 5 solutions, 
   #so we only need to clean this data for the first 5 trials
   
@@ -74,7 +74,7 @@ learning_table<- explicit_raw %>%
 
 learning<-learning_table %>% 
   rowwise() %>% 
-  #calculating learning score based on Porter et al (2020), thus creating a variable by adding up the time spent on each solution
+  #calculating learning score following Porter et al (2020), thus creating a variable by adding up the time spent on each solution
   mutate(learning_time = (sum(solution_time_1, solution_time_2, solution_time_3, solution_time_4, solution_time_5,
                               solution_time_6, solution_time_7, solution_time_8, solution_time_9, solution_time_10,
                               solution_time_11, solution_time_12, na.rm =  TRUE))) %>% 

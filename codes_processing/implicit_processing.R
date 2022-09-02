@@ -15,7 +15,7 @@ library(stringr)
 
 
 
-###we opened the labjs data with these steps but the raw data is too big and it was not possible to upload on github
+###Opened the labjs data with these steps but the raw data is too big and it was not possible to upload it on github
 # 
 # # load labjs data
 # iqmsmtpep<- read.csv("data/iqmsmtpep.csv")
@@ -61,6 +61,7 @@ library(stringr)
 
 #saveRDS(data_pep, file = "iqms_mtpep_raw.rds")
 
+#read RDS file
 iqms_mtpep_raw <- readRDS(file = "data/iqms_mtpep_raw.rds") %>% 
   #rearranging the datatable and getting rid of metadata by labjs
   select(running_id:word6, word7:word12, duration1:duration6, duration7:duration11, 
@@ -68,7 +69,7 @@ iqms_mtpep_raw <- readRDS(file = "data/iqms_mtpep_raw.rds") %>%
 
 
 
-######From this point on, as pre-registered, I use Jamie Cummin's related code from Cummins & De Houwer, 2021
+######From this point on, as pre-registered, using Jamie Cummin's related code from Cummins & De Houwer, 2021
 
 
 #"Initial cleaning of MT-PEP data

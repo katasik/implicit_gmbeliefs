@@ -115,7 +115,7 @@ explicit_scores<-
            effort_approach  = rowMeans(x = select(.data = .,`ACHIEVEMENT.GOALS_4`, `ACHIEVEMENT.GOALS_5`)),
            effort_avoidance  = rowMeans(x = select(.data = .,`ACHIEVEMENT.GOALS_6`, `ACHIEVEMENT.GOALS_7`)),
            grade = gsub(",", ".", note, fixed=TRUE),
-           #in Austrian education, GPA is reversed, so reverse it back so higher numbers mean higher achievement
+           #in German education system, GPA is reversed, so reverse it back so higher numbers mean higher achievement
            gpa_reversed = 6-as.numeric(grade)) %>% 
   #renamnig some variables for the final dataset
     rename(task_approach = `ACHIEVEMENT.GOALS_1`,
