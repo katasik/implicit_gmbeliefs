@@ -1,3 +1,5 @@
+# Load packages
+
 library(VGAM)
 library(sjPlot)
 library(tidyverse)
@@ -10,6 +12,8 @@ library(webshot)
 library(report)
 library(ggpubr)
 library(olsrr)
+
+# Read data
 
 final_df<- read.csv("final_data/final_df.csv")
 
@@ -110,44 +114,46 @@ ols_test_normality(lm_model)
 
 qplot(final_df$learning_time)
 
-#This is a gamma distribution, bounded at zero. 
-#Thus, we should run a zero-inflated gamma regression
 
-zigamma_model <- glmmTMB(learning_time ~ scale(pep_effect) + scale(self_efficacy),
-                         family = ziGamma(link = "log"),
-                         ziformula = ~ scale(pep_effect) + scale(self_efficacy),
-                         data = final_df)
-summary(zigamma_model)
-AIC(zigamma_model)
-report(zigamma_model)
+# Therefore, we created a (square-root) transformed variable to make it normally distributed
+qplot(final_df$learning_sqrt)
 
-model_parameters(zigamma_model, exponentiate = TRUE)
+# Here, we can see the transformation does not help with the zeros, therefore, we need to use a two-step model
+# first, a logistic regression to predict if the implicit score explains any variance in predicting if someone decided to view any solutions, 
+#then a linear regression among those who viewed at least one solution. The linear regression is the one that is important for us. 
 
-#exploratory analysis with more adequate model
-zigamma_model_explicit <- glmmTMB(learning_time ~ scale(pep_effect) + scale(self_efficacy) + scale(iqms_avg),
-                         family = ziGamma(link = "log"),
-                         ziformula = ~ scale(pep_effect) + scale(self_efficacy) + scale(iqms_avg),
-                         data = final_df)
-summary(zigamma_model_explicit)
-report(zigamma_model_explicit)
-
-model_parameters(zigamma_model_explicit, exponentiate = TRUE)
-
-#the gamma coefficients are correct, however the binomial part of the model actually calculates the probability of zero
-#rather than the probability of 1. From a stackoverflow answer:
-#"glmmTMB is predicting the probability of a zero rather than of a non-zero value"
-#this just means that we have to reverse the minus values to plus values in the binomial part of the model (and exponentiate the positive values in the end)
-#but just to confirm, the following code shows the same, but positive values in the binomial part of the model:
-
+# Binomial model
 binary_model <- glm(binary_learning ~ scale(pep_effect) + scale(self_efficacy),
-                         family = "binomial",
-                         data = final_df)
-summary(binary_model)
-
-binary_model_explicit <- glm(binary_learning ~ scale(pep_effect) + scale(self_efficacy) + scale(iqms_avg),
                     family = "binomial",
                     data = final_df)
+summary(binary_model)
+
+
+# Keeping only cases when people looked at at least 1 solution
+reduced<- final_df %>% 
+  filter(binary_learning == 1) 
+
+
+# Linear model with transformed score
+lm_model_transformed <- lm(learning_sqrt ~ scale(pep_effect) + scale(self_efficacy), data = reduced)
+summary(lm_model_transformed)
+
+tab_model(lm_model_transformed, 
+          show.intercept = TRUE,
+          show.est = TRUE,
+          show.se = TRUE,
+          show.p = TRUE,
+          show.stat = TRUE,
+          show.aic = TRUE)
+
+
+# Including the explicit score in the model as well
+binary_model_explicit <- glm(binary_learning ~ scale(self_efficacy) + scale(iqms_avg) + scale(pep_effect),
+                             family = "binomial",
+                             data = final_df)
 summary(binary_model_explicit)
+
+
 
 tab_model(binary_model_explicit, 
           show.intercept = TRUE,
@@ -158,61 +164,48 @@ tab_model(binary_model_explicit,
           show.aic = TRUE,
           file = "tables/binary_model_explicit.doc")
 
-#The zero-inflated gamma model shows that the implicit and explicit scores are predictive of learning time in the gamma regression
-#and not in the binomial model.
+# Including the explicit score in the linear model as well
 
-##Testing assumptions
-
-check_zigamma_model <- simulateResiduals(fittedModel = zigamma_model, n = 500)
-plot(check_zigamma_model)
-
-check_zigamma_model_explicit <- simulateResiduals(fittedModel = zigamma_model_explicit, n = 500)
-plot(check_zigamma_model)
-
-#Assumptions are fine
+lm_model_transformed_explicit <- lm(learning_sqrt ~ scale(self_efficacy) + scale(iqms_avg) + scale(pep_effect), data = reduced)
+summary(lm_model_transformed_explicit)
 
 
-#Let's create an APA table with the exponentiated results 
-#(remember to change the binomial results to the exponentiated positive values)
-tab_model(zigamma_model_explicit, 
+tab_model(lm_model_explicit, 
           show.intercept = TRUE,
           show.est = TRUE,
           show.se = TRUE,
           show.p = TRUE,
           show.stat = TRUE,
           show.aic = TRUE,
-          file = "tables/zigamma_table_explicit.doc")
+          file = "tables/lm_model_explicit.doc")
 
-#Predictions from  gamma model
-final_df$prob.of.con <- predict(zigamma_model_explicit, what="Conditional model", type="response")
+#The two-step model shows that the implicit score is predictive of learning time in the linear regression
+#and not in the binomial model. The explicit score shows only tendency in the linear regression and 
+#it is not predictive in the binomial model
+
+
+##Testing assumptions
+
+check_model(lm_model_explicit)
+
+#Assumptions are fine now
+
 
 
 #let's create a black and white plot 
-gamma_plot_i<-
-  plot_model(zigamma_model_explicit, type= "pred", terms = "pep_effect[all]", show.data = TRUE,
+linear_plot_i<-
+  plot_model(lm_model_transformed, type= "pred", terms = "pep_effect[all]", show.data = TRUE,
            title = "", line.size = NULL) +
   labs(y = "Time spent on viewing the solutions",
        x = "Implicit score of growth mindset") +
+  scale_y_continuous(labels=c("100 ms", "400 ms"), breaks = c(10, 20)) +
   theme_classic()
 
-
-gamma_plot_e<-
-  plot_model(zigamma_model_explicit, type= "pred", terms = "iqms_avg[all]", show.data = TRUE,
-             title = "", line.size = NULL) +
-  labs(y = "",
-       x = "Explicit score of growth mindset") +
-  theme_classic()
-
-
-both_plots<-
-  ggarrange(gamma_plot_i, gamma_plot_e, 
-          labels = c("", ""),
-          ncol = 2, nrow = 1)
 
 #save plot
-png(file="plots/both_plots.png",
-    width=1200, height=665, res = 150)
-plot(both_plots)
+png(file="plots/linear_plot_i.png",
+    width=800, height=611, res = 150)
+plot(linear_plot_i)
 dev.off()
 
 

@@ -15,7 +15,7 @@ library(stringr)
 
 
 
-###Opened the labjs data with these steps but the raw data is too big and it was not possible to upload it on github
+###Opened the labjs data with these steps but the raw data is too big
 # 
 # # load labjs data
 # iqmsmtpep<- read.csv("data/iqmsmtpep.csv")

@@ -77,13 +77,14 @@ learning<-learning_table %>%
   #calculating learning score following Porter et al (2020), thus creating a variable by adding up the time spent on each solution
   mutate(learning_time = (sum(solution_time_1, solution_time_2, solution_time_3, solution_time_4, solution_time_5,
                               solution_time_6, solution_time_7, solution_time_8, solution_time_9, solution_time_10,
-                              solution_time_11, solution_time_12, na.rm =  TRUE))) %>% 
-  #adding up the number of solutions reviewed
-  mutate(learning_num = sum(decision_1, decision_2, decision_3, decision_4, decision_5, decision_6, decision_7,
+                              solution_time_11, solution_time_12, na.rm =  TRUE)),
+         learning_sqrt = sqrt(learning_time),
+         learning_num = sum(decision_1, decision_2, decision_3, decision_4, decision_5, decision_6, decision_7,
                             decision_8, decision_9, decision_10, decision_11, decision_12, na.rm =TRUE)) %>% 
-  select(matchid_pep, learning_time, learning_num) %>% 
+  select(matchid_pep, learning_time, learning_sqrt, learning_num) %>% 
   mutate(matchid_pep = as.character(matchid_pep)) %>% 
   rename(matchid = matchid_pep)
+
 
 #creating binary column for analyses
 learning$binary_learning<- if_else(learning$learning_time == 0, 0, 1)
