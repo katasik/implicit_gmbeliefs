@@ -67,35 +67,6 @@ tab_model(lm_model_explicit_num,
           show.aic = TRUE,
           file = "tables/lm_table_item.doc")
 
-##Hierarhical regression first dependent variable
-
-
-lm_model_1 <- lm(scale(learning_time) ~  scale(self_efficacy), data = final_df)
-summary(lm_model_1)
-lm_model_2 <- lm(scale(learning_time) ~  scale(self_efficacy) + scale(iqms_avg), data = final_df)
-lm_model_3 <- lm(scale(learning_time) ~  scale(self_efficacy) + scale(iqms_avg) + scale(pep_effect), data = final_df)
-
-anova(lm_model_1, lm_model_2, lm_model_3)
-anova(lm_model_1, lm_model_3)
-
-summary(lm_model_2)$r.squared - summary(lm_model_1)$r.squared
-summary(lm_model_3)$r.squared - summary(lm_model_2)$r.squared
-summary(lm_model_3)$r.squared - summary(lm_model_1)$r.squared
-
-
-##Hierarhical regression secondary dependent variable
-
-lm_model_1_num <- lm(scale(learning_num) ~  scale(self_efficacy), data = final_df)
-summary(lm_model_1_num)
-lm_model_2_num <- lm(scale(learning_num) ~  scale(self_efficacy) + scale(iqms_avg), data = final_df)
-lm_model_3_num <- lm(scale(learning_num) ~  scale(self_efficacy) + scale(iqms_avg) + scale(pep_effect), data = final_df)
-
-anova(lm_model_1_num, lm_model_2_num, lm_model_3_num)
-anova(lm_model_1_num, lm_model_3_num)
-
-summary(lm_model_2_num)$r.squared - summary(lm_model_1_num)$r.squared
-summary(lm_model_3_num)$r.squared - summary(lm_model_2_num)$r.squared
-summary(lm_model_3_num)$r.squared - summary(lm_model_1_num)$r.squared
 
 
 #let's create a plot
@@ -207,6 +178,22 @@ png(file="plots/linear_plot_i.png",
     width=800, height=611, res = 150)
 plot(linear_plot_i)
 dev.off()
+
+
+##Hierarhical regression first time-based variable
+
+lm_model_1 <- lm(scale(learning_sqrt) ~  scale(self_efficacy), data = reduced)
+summary(lm_model_1)
+lm_model_2 <- lm(scale(learning_sqrt) ~  scale(self_efficacy) + scale(pep_effect), data = reduced)
+lm_model_3 <- lm(scale(learning_sqrt) ~  scale(self_efficacy) + scale(pep_effect) + scale(iqms_avg), data = reduced)
+
+anova(lm_model_1, lm_model_2, lm_model_3)
+anova(lm_model_1, lm_model_3)
+
+summary(lm_model_2)$r.squared - summary(lm_model_1)$r.squared
+summary(lm_model_3)$r.squared - summary(lm_model_2)$r.squared
+summary(lm_model_3)$r.squared - summary(lm_model_1)$r.squared
+
 
 
 ##Testing hypothesis on the pre-registered secondary outcome in a more adequate model
